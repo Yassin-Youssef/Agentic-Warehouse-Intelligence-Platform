@@ -1,0 +1,313 @@
+{
+  "source_file": "warehouse_logs_20260303_145843.json",
+  "analysis_timestamp": "2026-03-03 15:36:51",
+  "sim_duration_seconds": 14400,
+  "throughput": {
+    "total_tasks_completed": 3293,
+    "tasks_per_hour": [
+      790,
+      810,
+      842,
+      851
+    ],
+    "average_throughput_per_hour": 823.25,
+    "tasks_per_zone": {
+      "A3": 950,
+      "B2": 588,
+      "A1": 495,
+      "B3": 477,
+      "A2": 421,
+      "B1": 362
+    },
+    "tasks_per_zone_per_hour": {
+      "A3": [
+        248,
+        236,
+        224,
+        242
+      ],
+      "B2": [
+        123,
+        133,
+        169,
+        163
+      ],
+      "A1": [
+        112,
+        122,
+        148,
+        113
+      ],
+      "B3": [
+        113,
+        123,
+        119,
+        122
+      ],
+      "A2": [
+        96,
+        109,
+        99,
+        117
+      ],
+      "B1": [
+        98,
+        87,
+        83,
+        94
+      ]
+    },
+    "throughput_trend_slope": 21.5,
+    "throughput_trend": "increasing",
+    "highest_performing_zone": "A3",
+    "lowest_performing_zone": "B1",
+    "highest_zone_throughput_per_hour": 237.5,
+    "lowest_zone_throughput_per_hour": 90.5
+  },
+  "queue": {
+    "average_queue_length_per_zone": {
+      "A1": 1.1,
+      "A2": 1.08,
+      "A3": 1.44,
+      "B1": 1.13,
+      "B2": 1.35,
+      "B3": 1.38
+    },
+    "peak_queue_length_per_zone": {
+      "A1": 5,
+      "A2": 7,
+      "A3": 7,
+      "B1": 6,
+      "B2": 8,
+      "B3": 7
+    },
+    "queue_growth_rate_per_zone": {
+      "A1": 1.3e-05,
+      "A2": 2.1e-05,
+      "A3": 3e-06,
+      "B1": 9e-06,
+      "B2": 3.9e-05,
+      "B3": 2.6e-05
+    },
+    "congested_zones": [],
+    "congestion_events": 0,
+    "highest_avg_queue_zone": "A3",
+    "highest_peak_queue_zone": "B2"
+  },
+  "utilization": {
+    "robot_metrics": {
+      "1": {
+        "active_time": 6138.0,
+        "failed_time": 3099.12,
+        "charging_time": 180.0,
+        "idle_time": 4982.88,
+        "utilization_rate": 42.62,
+        "idle_rate": 34.6,
+        "failed_rate": 21.52,
+        "num_tasks": 341
+      },
+      "2": {
+        "active_time": 7002.0,
+        "failed_time": 1332.5,
+        "charging_time": 180.0,
+        "idle_time": 5885.5,
+        "utilization_rate": 48.62,
+        "idle_rate": 40.87,
+        "failed_rate": 9.25,
+        "num_tasks": 389
+      },
+      "3": {
+        "active_time": 6822.0,
+        "failed_time": 2066.06,
+        "charging_time": 180.0,
+        "idle_time": 5331.94,
+        "utilization_rate": 47.38,
+        "idle_rate": 37.03,
+        "failed_rate": 14.35,
+        "num_tasks": 379
+      },
+      "4": {
+        "active_time": 6588.0,
+        "failed_time": 2446.05,
+        "charging_time": 180.0,
+        "idle_time": 5185.95,
+        "utilization_rate": 45.75,
+        "idle_rate": 36.01,
+        "failed_rate": 16.99,
+        "num_tasks": 366
+      },
+      "5": {
+        "active_time": 6696.0,
+        "failed_time": 1829.75,
+        "charging_time": 180.0,
+        "idle_time": 5694.25,
+        "utilization_rate": 46.5,
+        "idle_rate": 39.54,
+        "failed_rate": 12.71,
+        "num_tasks": 372
+      },
+      "6": {
+        "active_time": 6462.0,
+        "failed_time": 2256.16,
+        "charging_time": 180.0,
+        "idle_time": 5501.84,
+        "utilization_rate": 44.88,
+        "idle_rate": 38.21,
+        "failed_rate": 15.67,
+        "num_tasks": 359
+      },
+      "7": {
+        "active_time": 6588.0,
+        "failed_time": 2049.21,
+        "charging_time": 180.0,
+        "idle_time": 5582.79,
+        "utilization_rate": 45.75,
+        "idle_rate": 38.77,
+        "failed_rate": 14.23,
+        "num_tasks": 366
+      },
+      "8": {
+        "active_time": 4176.0,
+        "failed_time": 5763.84,
+        "charging_time": 90.0,
+        "idle_time": 4370.16,
+        "utilization_rate": 29.0,
+        "idle_rate": 30.35,
+        "failed_rate": 40.03,
+        "num_tasks": 232
+      },
+      "9": {
+        "active_time": 4284.0,
+        "failed_time": 6179.23,
+        "charging_time": 90.0,
+        "idle_time": 3846.77,
+        "utilization_rate": 29.75,
+        "idle_rate": 26.71,
+        "failed_rate": 42.91,
+        "num_tasks": 238
+      },
+      "10": {
+        "active_time": 4518.0,
+        "failed_time": 5778.55,
+        "charging_time": 90.0,
+        "idle_time": 4013.45,
+        "utilization_rate": 31.37,
+        "idle_rate": 27.87,
+        "failed_rate": 40.13,
+        "num_tasks": 251
+      }
+    },
+    "underutilized_robots": [
+      [
+        2,
+        40.87
+      ]
+    ],
+    "overworked_robots": [],
+    "fleet_average_utilization": 41.16
+  },
+  "downtime": {
+    "robot_downtimes": {
+      "1": {
+        "failure_count": 13,
+        "total_downtime": 3099.12,
+        "mtbf_minutes": 14.49,
+        "downtime_percentage": 21.52,
+        "reliability_score": 56.96
+      },
+      "2": {
+        "failure_count": 6,
+        "total_downtime": 1332.5,
+        "mtbf_minutes": 36.3,
+        "downtime_percentage": 9.25,
+        "reliability_score": 81.5
+      },
+      "3": {
+        "failure_count": 10,
+        "total_downtime": 2066.06,
+        "mtbf_minutes": 20.56,
+        "downtime_percentage": 14.35,
+        "reliability_score": 71.3
+      },
+      "4": {
+        "failure_count": 10,
+        "total_downtime": 2446.05,
+        "mtbf_minutes": 19.92,
+        "downtime_percentage": 16.99,
+        "reliability_score": 66.02
+      },
+      "5": {
+        "failure_count": 9,
+        "total_downtime": 1829.75,
+        "mtbf_minutes": 23.28,
+        "downtime_percentage": 12.71,
+        "reliability_score": 74.58
+      },
+      "6": {
+        "failure_count": 12,
+        "total_downtime": 2256.16,
+        "mtbf_minutes": 16.87,
+        "downtime_percentage": 15.67,
+        "reliability_score": 68.66
+      },
+      "7": {
+        "failure_count": 8,
+        "total_downtime": 2049.21,
+        "mtbf_minutes": 25.73,
+        "downtime_percentage": 14.23,
+        "reliability_score": 71.54
+      },
+      "8": {
+        "failure_count": 24,
+        "total_downtime": 5763.84,
+        "mtbf_minutes": 6.0,
+        "downtime_percentage": 40.03,
+        "reliability_score": 19.94
+      },
+      "9": {
+        "failure_count": 30,
+        "total_downtime": 6179.23,
+        "mtbf_minutes": 4.57,
+        "downtime_percentage": 42.91,
+        "reliability_score": 14.18
+      },
+      "10": {
+        "failure_count": 27,
+        "total_downtime": 5778.55,
+        "mtbf_minutes": 5.32,
+        "downtime_percentage": 40.13,
+        "reliability_score": 19.74
+      }
+    },
+    "total_failures": 149,
+    "fleet_failure_rate": 3.73,
+    "least_reliable_robot": 9,
+    "most_reliable_robot": 2,
+    "failure_clusters": 8
+  },
+  "cost": {
+    "idle_cost": 209.98,
+    "delay_cost": 725.0,
+    "failure_cost": 7450.0,
+    "queue_cost": 819.0,
+    "total_inefficiency_cost": 9203.98,
+    "cost_breakdown": {
+      "idle": {
+        "amount": 209.98,
+        "percentage": 2.28
+      },
+      "delay": {
+        "amount": 725.0,
+        "percentage": 7.88
+      },
+      "failure": {
+        "amount": 7450.0,
+        "percentage": 80.94
+      },
+      "queue": {
+        "amount": 819.0,
+        "percentage": 8.9
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+============================================================
+WAREHOUSE OPERATIONS ANALYSIS
+============================================================
+Period: 0.0s to 14400s (4.0 hours)
+Source: warehouse_logs_20260303_145843.json
+
+--- THROUGHPUT ---
+Total tasks completed: 3293
+Average throughput: 823.25 tasks/hour
+Throughput trend: increasing (slope: 21.5)
+Highest performing zone: A3 (237.5 tasks/hour)
+Lowest performing zone: B1 (90.5 tasks/hour)
+Hourly breakdown: [790, 810, 842, 851]
+
+--- QUEUE HEALTH ---
+Zones with growing congestion: None detected
+Highest average queue: Zone A3 (1.44 items)
+Peak queue length: Zone B2 (8 items)
+Congestion events detected: 0
+
+--- ROBOT UTILIZATION ---
+Fleet average utilization: 41.16%
+Underutilized robots (>40% idle): Robot 2: 40.9% idle
+Overworked robots (>85% active): None
+
+--- DOWNTIME & RELIABILITY ---
+Total failures: 149
+Fleet failure rate: 3.73 failures/robot-hour
+Failure clusters detected: 8
+Least reliable robot: Robot 9 (score: 14.18, MTBF: 4.57 min)
+Most reliable robot: Robot 2 (score: 81.5, MTBF: 36.3 min)
+
+--- COST IMPACT ---
+Total estimated inefficiency cost: $9,203.98
+  Idle cost:    $209.98 (2.28%)
+  Delay cost:   $725.00 (7.88%)
+  Failure cost: $7,450.00 (80.94%)
+  Queue cost:   $819.00 (8.9%)
+============================================================
