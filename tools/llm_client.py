@@ -1,88 +1,127 @@
-"""LLM client — thin wrapper around the Anthropic Claude Messages API."""
-
-from __future__ import annotations
+# =============================================================================
+# LLM CLIENT
+# This is the bridge between our agents and the LLM (Claude).
+# Instead of calling Anthropic directly, we go through OpenRouter —
+# a gateway that forwards our request to Claude and returns the response.
+# Same model, same quality, different URL.
+# How it works:
+#   1. Load the API key from .env file (never hardcoded)
+#   2. Build a request with a system prompt (role) and user prompt (data)
+#   3. POST it to OpenRouter's endpoint
+#   4. Parse the response and return the text
+#   5. If it fails, retry up to 2 times with a 3-second delay
+#   6. If all retries fail, return a safe fallback string
+#
+# OpenRouter uses the OpenAI-compatible format:
+#   - "messages" array with "role" and "content"
+#   - Response at response["choices"][0]["message"]["content"]
+# This is different from Anthropic's native format but Claude
+# behaves the same way regardless of which door you go through.
+# =============================================================================
 
 import logging
 import os
 import time
-from typing import Optional
+import requests  # HTTP library for making API calls
+from dotenv import load_dotenv # reads .env file into environment variables
+from config.agent_config import DEFAULT_MODEL, MAX_TOKENS
 
-import requests
-from dotenv import load_dotenv
+# load .env file — this puts OPENROUTER_API_KEY into os.environ
+# so we can access it with os.getenv() below
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Load .env from the project root
-load_dotenv()
+# load API key once when the module is imported
+# this way we don't read .env on every single LLM call
+_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
-_API_URL = "https://api.anthropic.com/v1/messages"
-_MAX_RETRIES = 2
-_RETRY_DELAY = 3  # seconds
-
+# OpenRouter's endpoint — same format as OpenAI's API
+_BASE_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 def call_llm(
     system_prompt: str,
     user_prompt: str,
-    model: str = "claude-sonnet-4-20250514",
-    max_tokens: int = 1500,
+    model: str = DEFAULT_MODEL,
+    max_tokens: int = MAX_TOKENS,
 ) -> str:
-    """Send a prompt to the Anthropic Claude API and return the response text.
+    """Send a prompt to Claude via OpenRouter and return the response text.
 
     Args:
-        system_prompt: System-level instruction for the model.
-        user_prompt: The user message containing data and questions.
-        model: Anthropic model identifier.
-        max_tokens: Maximum tokens in the response.
+        system_prompt: tells the LLM what role to play (e.g. "You are a warehouse analyst")
+        user_prompt: the actual data and question (e.g. the metrics + "analyze this")
+        model: which model to use on OpenRouter (default: Claude Sonnet)
+        max_tokens: max length of the response
 
     Returns:
-        The model's text response, or a fallback error string on failure.
+        The LLM's text response, or a fallback error string if all retries fail.
     """
-    api_key = os.getenv("ANTHROPIC_API_KEY", "")
-    if not api_key or api_key == "your_key_here":
-        logger.error("ANTHROPIC_API_KEY not set or still placeholder.")
-        return "Analysis unavailable — ANTHROPIC_API_KEY not configured."
+    # check that we actually have an API key
+    if not _API_KEY:
+        logger.error("OPENROUTER_API_KEY not found in .env file")
+        return "Analysis unavailable — API key not configured."
 
+    # OpenRouter uses Bearer token auth (same as OpenAI)
     headers = {
-        "x-api-key": api_key,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
+        "Authorization": f"Bearer {_API_KEY}",
+        "Content-Type": "application/json",
     }
+
+    # the request body follows OpenAI's chat completion format
+    # system message = what role the LLM plays
+    # user message = the actual data + question
     body = {
         "model": model,
         "max_tokens": max_tokens,
-        "system": system_prompt,
-        "messages": [{"role": "user", "content": user_prompt}],
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
     }
 
-    prompt_len = len(system_prompt) + len(user_prompt)
-    last_error: Optional[str] = None
-
-    for attempt in range(1, _MAX_RETRIES + 1):
+    # retry logic: try up to 3 times total (1 original + 2 retries)
+    max_retries = 2
+    for attempt in range(max_retries + 1):
         try:
-            logger.info(
-                "LLM call attempt %d/%d — prompt length: %d chars, model: %s",
-                attempt, _MAX_RETRIES, prompt_len, model,
-            )
-            t0 = time.time()
-            resp = requests.post(_API_URL, headers=headers, json=body, timeout=60)
-            latency = round(time.time() - t0, 2)
+            # time the call so we can log latency
+            start_time = time.time()
+            # send the POST request to OpenRouter, timeout after 60 seconds
+            response = requests.post(_BASE_URL, headers=headers, json=body, timeout=60)
+            latency = round(time.time() - start_time, 2)
 
-            if resp.status_code == 200:
-                text = resp.json()["content"][0]["text"]
-                logger.info(
-                    "LLM response received — %d chars in %.2fs", len(text), latency,
+            # check if the request was successful
+            if response.status_code != 200:
+                logger.warning(
+                    "LLM call failed (attempt %d/%d): status %d — %s",
+                    attempt + 1, max_retries + 1, response.status_code, response.text[:200],
                 )
-                return text
-            else:
-                last_error = f"HTTP {resp.status_code}: {resp.text[:200]}"
-                logger.warning("LLM call failed (attempt %d): %s", attempt, last_error)
-        except Exception as exc:
-            last_error = str(exc)
-            logger.warning("LLM call exception (attempt %d): %s", attempt, last_error)
+                if attempt < max_retries:
+                    time.sleep(3)  # wait 3 seconds before retrying
+                    continue
+                return "Analysis unavailable — LLM call failed."
 
-        if attempt < _MAX_RETRIES:
-            logger.info("Retrying in %ds …", _RETRY_DELAY)
-            time.sleep(_RETRY_DELAY)
+            # parse the response JSON
+            # OpenRouter returns: {"choices": [{"message": {"content": "the text"}}]}
+            data = response.json()
+            text = data["choices"][0]["message"]["content"]
 
-    logger.error("All LLM retries exhausted. Last error: %s", last_error)
-    return "Analysis unavailable — LLM call failed."
+            logger.info(
+                "LLM call success — prompt: %d chars, response: %d chars, latency: %.1fs",
+                len(system_prompt) + len(user_prompt), len(text), latency,
+            )
+            return text
+
+        except requests.exceptions.Timeout:
+            logger.warning("LLM call timed out (attempt %d/%d)", attempt + 1, max_retries + 1)
+            if attempt < max_retries:
+                time.sleep(3)
+                continue
+
+        except Exception as e:
+            logger.error("LLM call error (attempt %d/%d): %s", attempt + 1, max_retries + 1, str(e))
+            if attempt < max_retries:
+                time.sleep(3)
+                continue
+
+    # all retries exhausted
+    return "Analysis unavailable — LLM call failed after retries."
